@@ -1,0 +1,49 @@
+import re
+# Функция для преобразования числа в слова
+def number_to_words(num):
+    words = {
+        '0': 'ноль',
+        '1': 'один',
+        '2': 'два',
+        '3': 'три',
+        '4': 'четыре',
+        '5': 'пять',
+        '6': 'шесть',
+        '7': 'семь',
+        '8': 'восемь',
+        '9': 'девять',
+        'A': 'десять',
+        'B': 'одиннадцать',
+        'C': 'двенадцать',
+        'D': 'тринадцать',
+        'E': 'четырнадцать',
+        'F': 'пятнадцать'
+    }
+    return ' '.join(words[digit] for digit in str(num))
+
+# Шаблон для поиска чисел в тексте
+pattern = r'\b[0-9A-Fa-f]+\b'
+
+# Считываем содержимое файла
+with open("input.txt", "r") as file:
+    text = file.read()
+
+# Ищем числа, удовлетворяющие условиям задачи с помощью регулярного выражения
+matches = re.findall(pattern, text)
+
+# Фильтруем числа по условиям задачи
+valid_numbers = [int(match, 16) for match in matches if len(match) == int(match[0]) and int(match, 16) % 2 == 0 and int(match, 16) <= 204810]
+
+# Выводим найденные числа и их количество
+print("Найденные числа:")
+for num in valid_numbers:
+    print(hex(num), number_to_words(num))
+
+print("Количество чисел:", len(valid_numbers))
+
+# Находим и выводим максимальное число прописью
+if valid_numbers:
+    max_num = max(valid_numbers)
+    print("Максимальное число прописью:", number_to_words(max_num))
+else:
+    print("Нет подходящих чисел")
