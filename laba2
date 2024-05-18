@@ -1,49 +1,24 @@
+Шеснадцатиричные четные числа, не превышающие 102410 начинающиеся с нечетных цифр. Четные цифры выводить словамии
+'''
 import re
-# Функция для преобразования числа в слова
-def number_to_words(num):
-    words = {
-        '0': 'ноль',
-        '1': 'один',
-        '2': 'два',
-        '3': 'три',
-        '4': 'четыре',
-        '5': 'пять',
-        '6': 'шесть',
-        '7': 'семь',
-        '8': 'восемь',
-        '9': 'девять',
-        'A': 'десять',
-        'B': 'одиннадцать',
-        'C': 'двенадцать',
-        'D': 'тринадцать',
-        'E': 'четырнадцать',
-        'F': 'пятнадцать'
-    }
-    return ' '.join(words[digit] for digit in str(num))
 
-# Шаблон для поиска чисел в тексте
-pattern = r'\b[0-9A-Fa-f]+\b'
+digit_to_word = {
+    '0': 'ноль', '2': 'два', '4': 'четыре', '6': 'шесть',
+    '8': 'восемь', 'A': 'десять', 'C': 'двенадцать', 'E': 'четырнадцать'
+}
 
-# Считываем содержимое файла
-with open("input.txt", "r") as file:
-    text = file.read()
+def hex_to_words(hex_num):
+    if int(hex_num, 16) <= 0x400 and hex_num[0] in '13579BDF':
+        return ' '.join(digit_to_word.get(d, d) for d in hex_num)
+    else:
+        return "не удовлетворяет условию задачи"
 
-# Ищем числа, удовлетворяющие условиям задачи с помощью регулярного выражения
-matches = re.findall(pattern, text)
 
-# Фильтруем числа по условиям задачи
-valid_numbers = [int(match, 16) for match in matches if len(match) == int(match[0]) and int(match, 16) % 2 == 0 and int(match, 16) <= 204810]
 
-# Выводим найденные числа и их количество
-print("Найденные числа:")
-for num in valid_numbers:
-    print(hex(num), number_to_words(num))
+pattern = re.compile(r'\b[13579BDF][0-9A-F]*[02468ACE]\b', re.IGNORECASE)
 
-print("Количество чисел:", len(valid_numbers))
-
-# Находим и выводим максимальное число прописью
-if valid_numbers:
-    max_num = max(valid_numbers)
-    print("Максимальное число прописью:", number_to_words(max_num))
-else:
-    print("Нет подходящих чисел")
+with open('test.txt', 'r') as f:
+    for match in pattern.finditer(f.read()):
+        word_representation = hex_to_words(match.group())
+        if word_representation:
+            print(f"{match.group()}: {word_representation}")
